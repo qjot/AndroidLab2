@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
             unbindService(bindConnection);
             isBinded = false;
         }
+
+        bindService.stopService(new Intent(this, BindService.class));
+        createToast("Your bind service has stoped");
     }
 
 

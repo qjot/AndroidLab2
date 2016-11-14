@@ -17,6 +17,8 @@ public class BindService extends Service {
     }
     private final IBinder mBinder = new LocalBinder();
     private int counter = 0;
+    private Timer timerToast;
+    private TimerTask timerToastTask;
 
     public class LocalBinder extends Binder {
         BindService getService() {
@@ -28,7 +30,33 @@ public class BindService extends Service {
     public void onCreate()
     {
         createToast("Bound service has beed started");
-        new Timer().scheduleAtFixedRate(new TimerTask() {
+        setTimer();
+//         new Timer().scheduleAtFixedRate(new TimerTask() {
+//            private Handler updateUI = new Handler(){
+//                @Override
+//                public void dispatchMessage(Message msg) {
+//                    super.dispatchMessage(msg);
+//                    createToast("Your bound service is still working");
+//                    counter++;
+//                }
+//            };
+//            public void run() {
+//                try {
+//                    updateUI.sendEmptyMessage(0);
+//                } catch (Exception e) {e.printStackTrace(); }
+//            }
+//        }, 0,20000);
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        timerToast.cancel();
+    }
+    private void setTimer()
+    {
+        timerToast = new Timer();
+        timerToast.scheduleAtFixedRate(new TimerTask() {
             private Handler updateUI = new Handler(){
                 @Override
                 public void dispatchMessage(Message msg) {
@@ -42,7 +70,7 @@ public class BindService extends Service {
                     updateUI.sendEmptyMessage(0);
                 } catch (Exception e) {e.printStackTrace(); }
             }
-        }, 0,10000);
+        }, 0,20000);
     }
     public void createToast(String message)
     {
@@ -52,9 +80,9 @@ public class BindService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return mBinder;
     }
+
 
     public int getCounter() {
         return counter;
